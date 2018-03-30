@@ -8,7 +8,7 @@
 #include <iostream>
 
 namespace tema1 {
-  class Problem {
+  class problem {
   public:
     /*
     * Read data from file.
@@ -26,7 +26,7 @@ namespace tema1 {
     virtual bool Write(std::string filename) = 0;
   };
 
-  class Brothers : public Problem {
+  class Brothers : public problem {
   public:
     bool Read(std::string filename) override;
 
@@ -35,7 +35,7 @@ namespace tema1 {
     bool Write(std::string filename) override;
   };
 
-  class Bears : public Problem {
+  class Bears : public problem {
   public:
     bool Read(std::string filename) override;
 

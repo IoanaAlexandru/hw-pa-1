@@ -2,7 +2,7 @@
 // Created by ioana on 27.03.2018.
 //
 
-#include "Problem.h"
+#include "problem.h"
 #include <vector>
 #include <algorithm>
 #include <fstream>
@@ -74,12 +74,10 @@ Contest Choose(bool Jon_picks, std::vector<Contest> &most_disliked) {
       else
         difference = c.comics - most_disliked.at(0).games;
 
-    std::cout << "diff = " << difference << std::endl;
     if (difference > max_difference) {
       preferred_contest = c;
       max_difference = difference;
     }
-    std::cout << "max diff = " << max_difference << std::endl;
   }
 
   return preferred_contest;
@@ -115,8 +113,6 @@ void tema1::Brothers::Solve() {
       prize_Jon += picked_contest.games;
     else
       prize_Sam += picked_contest.comics;
-
-    std::cout << picked_contest.games << ' ' << picked_contest.comics << std::endl;
 
     Jon_picks = not Jon_picks;
   }
