@@ -3,6 +3,9 @@ CMakeLists.txt
 cmake-build-debug
 *.in
 *.out
+*check*
+*_*
+*.PA
 brothers
 bears
 planning
