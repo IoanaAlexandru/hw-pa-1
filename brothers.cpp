@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <fstream>
+#include <iterator>
 
 //Contest structure and sorting methods
 struct Contest {
@@ -35,8 +36,7 @@ std::vector<Contest> contests;
 int prize_Jon, prize_Sam;
 
 bool tema1::Brothers::Read(std::string filename) {
-  std::ifstream f;
-  f.open(filename);
+  std::ifstream f(filename);
 
   if (!f.is_open())
     return false;
@@ -56,24 +56,34 @@ bool tema1::Brothers::Read(std::string filename) {
   return true;
 }
 
-Contest Choose(bool Jon_picks, std::vector<Contest> &most_disliked) {
+Contest Choose(bool Jon_picks) {
   Contest preferred_contest(0, 0);
+  int comics_left = 0, games_left = 0;
+
+  for (Contest c : contests) {
+    comics_left += c.comics;
+    games_left += c.games;
+  }
 
   int max_difference = INT32_MIN;
-  for (Contest c : most_disliked) {
-    int difference;
+  for (Contest c : contests) {
+    int difference = prize_Jon - prize_Sam;
+    if (Jon_picks) {
+      difference = difference + c.games/*games_left*/ - comics_left + c.comics;
+    } else {
+      difference = -difference + c.comics/*comics_left*/ - games_left + c.games;
+    }
+//      difference = -difference;
+//    //Jon: (liked_left - c.games) - (disliked_left - c.comics) = liked_left - disliked_left - (c.games - c.comics)
+//    difference = liked_left - disliked_left - difference;
 
-    if (c == most_disliked.at(0))
-      if (Jon_picks)
-        difference = c.games - most_disliked.at(1).comics;
-      else
-        difference = c.comics - most_disliked.at(1).games;
-    else
-      if (Jon_picks)
-        difference = c.games - most_disliked.at(0).comics;
-      else
-        difference = c.comics - most_disliked.at(0).games;
+//    Jon: prize_Jon + liked_left - (prize_Sam + disliked_left - c.comics)
+//    Sam: prize_Sam + liked_left - (prize_Jon + disliked_left - c.games)
 
+//    Jon: prize_Jon +
+
+    // difference < 0 => absolute value should be as small as possible => value should be as big as possible
+    // difference > 0 => value should be as big as possible
     if (difference > max_difference) {
       preferred_contest = c;
       max_difference = difference;
@@ -86,33 +96,23 @@ Contest Choose(bool Jon_picks, std::vector<Contest> &most_disliked) {
 void tema1::Brothers::Solve() {
   bool Jon_picks = true;
 
-  std::vector<Contest> most_games = std::vector<Contest>(contests);
-  std::sort(most_games.begin(), most_games.end(), more_games());
-  std::vector<Contest> most_comics = std::vector<Contest>(contests);
-  std::sort(most_comics.begin(), most_comics.end(), more_comics());
-
   Contest picked_contest(0, 0);
 
-  while (!most_games.empty()) {
-    if (most_games.at(0) == most_comics.at(0)) {
-      picked_contest = most_comics.at(0);
+  while (!contests.empty()) {
+    picked_contest = Choose(Jon_picks);
 
-      most_comics.erase(most_comics.begin());
-      most_games.erase(most_games.begin());
-    } else {
-      if (Jon_picks)
-        picked_contest = Choose(Jon_picks, most_comics);
-      else
-        picked_contest = Choose(Jon_picks, most_games);
-
-      most_comics.erase(find(most_comics.begin(), most_comics.end(), picked_contest));
-      most_games.erase(find(most_games.begin(), most_games.end(), picked_contest));
-    }
+    contests.erase(find(contests.begin(), contests.end(), picked_contest));
 
     if (Jon_picks)
       prize_Jon += picked_contest.games;
     else
       prize_Sam += picked_contest.comics;
+
+    if (Jon_picks)
+      std::cout << "Jon: ";
+    else
+      std::cout << "Sam: ";
+    std::cout << picked_contest.games << ' ' << picked_contest.comics << std::endl;
 
     Jon_picks = not Jon_picks;
   }

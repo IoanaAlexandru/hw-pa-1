@@ -43,6 +43,15 @@ namespace tema1 {
 
     bool Write(std::string filename) override;
   };
+
+  class Planning : public problem {
+  public:
+    bool Read(std::string filename) override;
+
+    void Solve() override;
+
+    bool Write(std::string filename) override;
+  };
 }
 
 #endif //TEMA1_PROBLEM_H
