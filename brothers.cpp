@@ -6,7 +6,6 @@
 #include <vector>
 #include <algorithm>
 #include <fstream>
-#include <iterator>
 
 //Contest structure and sorting methods
 struct Contest {
@@ -17,17 +16,9 @@ struct Contest {
   bool operator==(const Contest &contest2) {
     return games == contest2.games && comics == contest2.comics;
   }
-};
 
-struct more_games {
-  inline bool operator()(const Contest &contest1, const Contest &contest2) {
-    return contest1.games > contest2.games;
-  }
-};
-
-struct more_comics {
-  inline bool operator()(const Contest &contest1, const Contest &contest2) {
-    return contest1.comics > contest2.comics;
+  bool operator<(const Contest &contest2) {
+    return games + comics < contest2.games + contest2.comics;
   }
 };
 
@@ -36,7 +27,8 @@ std::vector<Contest> contests;
 int prize_Jon, prize_Sam;
 
 bool tema1::Brothers::Read(std::string filename) {
-  std::ifstream f(filename);
+  std::ifstream f;
+  f.open(filename);
 
   if (!f.is_open())
     return false;
@@ -53,42 +45,39 @@ bool tema1::Brothers::Read(std::string filename) {
 
   prize_Jon = prize_Sam = 0;
 
+  std::sort(contests.rbegin(), contests.rend());
+
   return true;
 }
 
 Contest Choose(bool Jon_picks) {
-  Contest preferred_contest(0, 0);
-  int comics_left = 0, games_left = 0;
+  Contest preferred_contest = contests.at(0);
+  int preferred_contest_nr = 0, nr = -1;
+
+  int max_sum = preferred_contest.comics + preferred_contest.games;
 
   for (Contest c : contests) {
-    comics_left += c.comics;
-    games_left += c.games;
+    nr++;
+
+    if (c == contests.at(0))
+      continue;
+    if (c.comics + c.games == max_sum)
+      if (Jon_picks) {
+        if (c.games > preferred_contest.games) {
+          preferred_contest = c;
+          preferred_contest_nr = nr;
+        }
+      } else {
+        if (c.comics > preferred_contest.comics) {
+          preferred_contest = c;
+          preferred_contest_nr = nr;
+        }
+      }
+    else
+      break;
   }
 
-  int max_difference = INT32_MIN;
-  for (Contest c : contests) {
-    int difference = prize_Jon - prize_Sam;
-    if (Jon_picks) {
-      difference = difference + c.games/*games_left*/ - comics_left + c.comics;
-    } else {
-      difference = -difference + c.comics/*comics_left*/ - games_left + c.games;
-    }
-//      difference = -difference;
-//    //Jon: (liked_left - c.games) - (disliked_left - c.comics) = liked_left - disliked_left - (c.games - c.comics)
-//    difference = liked_left - disliked_left - difference;
-
-//    Jon: prize_Jon + liked_left - (prize_Sam + disliked_left - c.comics)
-//    Sam: prize_Sam + liked_left - (prize_Jon + disliked_left - c.games)
-
-//    Jon: prize_Jon +
-
-    // difference < 0 => absolute value should be as small as possible => value should be as big as possible
-    // difference > 0 => value should be as big as possible
-    if (difference > max_difference) {
-      preferred_contest = c;
-      max_difference = difference;
-    }
-  }
+  contests.erase(contests.begin() + preferred_contest_nr);
 
   return preferred_contest;
 }
@@ -98,24 +87,29 @@ void tema1::Brothers::Solve() {
 
   Contest picked_contest(0, 0);
 
-  while (!contests.empty()) {
+  while (contests.size() > 1) {
     picked_contest = Choose(Jon_picks);
 
-    contests.erase(find(contests.begin(), contests.end(), picked_contest));
+    //contests.erase(find(contests.begin(), contests.end(), picked_contest));
 
     if (Jon_picks)
       prize_Jon += picked_contest.games;
     else
       prize_Sam += picked_contest.comics;
 
-    if (Jon_picks)
-      std::cout << "Jon: ";
-    else
-      std::cout << "Sam: ";
-    std::cout << picked_contest.games << ' ' << picked_contest.comics << std::endl;
+    //std::cout << picked_contest.games << ' ' << picked_contest.comics << std::endl;
 
     Jon_picks = not Jon_picks;
   }
+
+  picked_contest = contests.at(0);
+
+  if (Jon_picks)
+    prize_Jon += picked_contest.games;
+  else
+    prize_Sam += picked_contest.comics;
+
+  std::cout << picked_contest.games << ' ' << picked_contest.comics << std::endl;
 }
 
 bool tema1::Brothers::Write(std::string filename) {

@@ -1,12 +1,12 @@
 //
-// Created by ioana on 30.03.2018.
+// Copyright Ioana Alexandru 2018
 //
 
-#include "problem.h"
 #include <vector>
 #include <algorithm>
 #include <fstream>
 #include <cstring>
+#include "./problem.h"
 
 const double kMod = 1e9 + 7;
 

@@ -1,7 +1,8 @@
 build: brothers bears planning counting
 
 brothers:
-	g++ -Wall -g frati.cpp brothers.cpp -o brothers
+	#g++ -Wall -pg -O3 -no-pie frati.cpp brothers.cpp -o brothers
+	g++ -Wall -O3 frati.cpp brothers.cpp -o brothers
 
 bears:
 	# g++ -Wall -g ursi.cpp bears.cpp -o bears

@@ -1,5 +1,5 @@
 //
-// Created by ioana on 27.03.2018.
+// Copyright Ioana Alexandru 2018
 //
 
 #include "problem.h"
