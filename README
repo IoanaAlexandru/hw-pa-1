@@ -1,0 +1,78 @@
+              ____   _              _____                    _ 
+             |  _ \ / \            |_   _|__ _ __ ___   __ _/ |
+             | |_) / _ \    _____    | |/ _ \ '_ ` _ \ / _` | |
+             |  __/ ___ \  |_____|   | |  __/ | | | | | (_| | |
+             |_| /_/   \_\           |_|\___|_| |_| |_|\__,_|_|
+                                                               
+  ___         _   _ 
+ | __| _ __ _| |_(_)
+ | _| '_/ _` |  _| |
+ |_||_| \__,_|\__|_|
+                    
+    Pentru ca fiecare frate să aibă mai multe obiecte preferate decât fratele său, iar
+dacă acest lucru nu este posibil, diferența finală să fie cât mai mică, fiecare frate va
+dori să aleagă concursul cu cele mai multe premii totale (suma dintre benzi și jocuri),
+astfel încât să primească cât mai multe obiecte preferate și totodată să îl oprească pe
+fratele său din a lua cât mai multe obiecte. În cazul în care există mai multe concur-
+suri cu aceeași sumă, fiecare frate va dori să aleagă concursul care îi aduce cele mai
+multe obiecte preferate.
+    Pentru a obține această împărțire cât mai eficient, am definit operatorul < pentru
+structura Contest (care conține 4 câmpuri - games, comics, sum - pentru a nu avea nevoie
+să calculăm suma de fiecare dată - și chosen, care arată dacă acel concurs a fost deja
+ales sau nu). Acest operator face ca std::sort să ordoneze vectorul de concursuri des-
+crescător în funcție de sumă, iar concursurile cu aceeași sumă vor fi sortate descrescă-
+tor în funcție de numărul de jocuri.
+    Pentu a găsi, pe rând, fiecare concurs ales de fiecare frate, folosesc doi iteratori,
+start și end, care indică către primul, respectiv ultimul element din grupările de con-
+cursuri care au aceeași sumă, de exemplu ([] => nu a fost ales încă | () -> a fost ales):
+
+            ... (19 10) [18 10] [16 12] [15 13] [10 18] [8 20] [12 10] ...
+                           ↑                              ↑
+                         start                           end
+
+    "start" va indica către concursul pe care ar prefera Jon să îl aleagă (cu cele mai
+multe jocuri), iar "end" va indica către concursul pe care ar prefera Sam să îl aleagă
+(cu cele mai multe benzi). Presupunând că Jon a ales deja concursul (19 10), este rândul
+lui Sam să aleagă. El va alege concursul indicat de end, iar end se va deplasa la stânga:
+
+            ... (19 10) [18 10] [16 12] [15 13] [10 18] (8 20) [12 10] ...
+                           ↑                       ↑
+                         start                    end
+
+    Acum este rândul lui Jon să aleagă, iar el va alege concursul indicat de start, iar
+start se va deplasa la dreapta:
+
+            ... (19 10) (18 10) [16 12] [15 13] [10 18] (8 20) [12 10] ...
+                                   ↑               ↑
+                                 start            end
+
+    Din nou vine rândul lui Sam, care va alege concursul indicat de end:
+
+            ... (19 10) (18 10) [16 12] [15 13] (10 18) (8 20) [12 10] ...
+                                   ↑       ↑
+                                 start    end
+
+    Jon, la rândul lui, va alege iar concursul indicat de start, iar start va ajunge să
+indice același concurs ca și end:
+
+            ... (19 10) (18 10) (16 12) [15 13] (10 18) (8 20) [12 10] ...
+                                           ↑
+                                          end
+                                         start
+
+    Sam alege concursul indicat de end, iar acum, ambii iteratori indicând spre același
+concurs și ultimul concurs din grupare fiind ales, ambii iteratori se vor deplasa către
+următoarea grupare de concursuri cu aceeași sumă (chiar dacă este formată dintr-un sin-
+gur concurs), și același algoritm va fi aplicat.
+
+            ... (19 10) (18 10) (16 12) (15 13) (10 18) (8 20) [12 10] ...
+                                                                  ↑
+                                                                start
+                                                                 end
+
+    Complexitatea programului este după cum urmează:
+
+→ Citire și salvare date: O(N)  │
+→ Sortare vector: O(N * log(N)) │=> Total: O(N * log(N))
+→ Algoritm de rezolvare: O(N)   │
+
