@@ -9,8 +9,32 @@
 #include <cmath>
 #include "./problem.h"
 
-int P, D, B, L, N;
+int P, D, B, N;
+long long L;
 std::vector<int> lengths;
+
+struct Contest {
+  int start, end;
+  long long cost;
+
+  Contest(int start, int end, long long cost) : start(start), end(end),
+                                                cost(cost) {}
+};
+
+struct Result {
+  long long cost;
+  int contests;
+  bool assigned;
+
+  Result(long long cost, bool assigned) : cost(cost), contests(1),
+                                          assigned(assigned) {}
+
+  void set(long long cost, int contests, bool assigned) {
+    this->cost = cost;
+    this->contests = contests;
+    this->assigned = assigned;
+  }
+};
 
 bool tema1::Planning::Read(std::string filename) {
   std::ifstream f(filename);
@@ -36,8 +60,7 @@ bool tema1::Planning::Read(std::string filename) {
 }
 
 void tema1::Planning::Solve() {
-  // std::vector<Contest> contests;
-  double costs[P + 1][P + 1] = {};
+  std::vector<Contest> contests;
 
   for (int i = 1; i <= P; i++) {
     int length = 0;
@@ -46,43 +69,37 @@ void tema1::Planning::Solve() {
 
       if (length <= D) {
         if (j == P)
-          costs[i][j] = 0;
+          contests.emplace_back(i, j, 0);
         else
-          costs[i][j] = pow(D - length, 3);
+          contests.emplace_back(i, j, pow(D - length, 3));
       } else {
-        costs[i][j] = -1;
-
-        length += B;
-      }
-    }
-  }
-
-  int i = 0;
-
-  while (i <= P) {
-    double min_cost = INT32_MAX;
-    int next_i = i;
-
-    for (int j = i; j <= P; j++) {
-      std::cout << costs[i][j] << " ";
-
-      if (costs[i][j] == -1)
         break;
-
-      if (costs[i][j] < min_cost) {
-        std::cout << "L = " << L << std::endl;
-        min_cost = costs[i][j];
-        next_i = j + 1;  // task j was assigned, so j + 1 is next
       }
-    }
-    std::cout << std::endl;
 
-    L += min_cost;
-    N++;
-    i = next_i;
+      length += B;
+    }
   }
 
-  N--;
+  std::vector<Result> dp;
+
+  for (Contest c : contests)
+    dp.emplace_back(c.cost, c.start == 1);
+
+  for (unsigned long i = 1; i < contests.size(); i++) {
+    for (unsigned long j = 0; j < i; j++) {
+      if (contests.at(j).end + 1 != contests.at(i).start)
+        continue;
+      if (!dp.at(i).assigned)
+        dp.at(i).set(contests.at(i).cost + dp.at(j).cost, dp.at(j).contests + 1,
+                     true);
+      else if (dp.at(j).cost + contests.at(i).cost < dp.at(i).cost)
+        dp.at(i).set(dp.at(j).cost + contests.at(i).cost, dp.at(j).contests + 1,
+                     true);
+    }
+  }
+
+  L = dp.at(dp.size() - 1).cost;
+  N = dp.at(dp.size() - 1).contests;
 }
 
 bool tema1::Planning::Write(std::string filename) {
