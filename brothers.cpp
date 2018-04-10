@@ -69,6 +69,7 @@ void tema1::Brothers::Solve() {
   int max_sum {0};
 
   for (int i = 0; i < N; i++, Jon_picks = !Jon_picks) {
+    // Place start and end iterators if necessary
     if (start == end)
       while (start->chosen)
         start++;
@@ -82,6 +83,7 @@ void tema1::Brothers::Solve() {
           break;
     }
 
+    // Assign contest to brother
     if (start == end) {
       picked_contest = start;
       start++;
