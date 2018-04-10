@@ -58,8 +58,9 @@ bool tema1::Planning::Read(std::string filename) {
 }
 
 void tema1::Planning::Solve() {
-  std::vector<Contest> contests;
+  std::vector<Contest> contests;  // vector used for the DP solution
 
+  // Finding possible contests
   for (int i = P; i >= 1; i--) {
     int length = 0;
     for (int j = i; j >= 1; j--) {
@@ -78,6 +79,7 @@ void tema1::Planning::Solve() {
     }
   }
 
+  // Using dynamic programming to find minimum total loss and number of contests
   for (auto curr = contests.end() - 1; curr >= contests.begin(); curr--) {
     for (auto prev = curr + 1; prev < contests.end(); prev++) {
       if (prev->end + 1 < curr->start)
