@@ -2,7 +2,7 @@
 // Copyright Ioana Alexandru 2018
 //
 
-#include "problem.h"
+#include "./problem.h"
 
 int main() {
   tema1::Brothers problem;

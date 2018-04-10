@@ -1,5 +1,5 @@
 //
-// Created by ioana on 27.03.2018.
+// Copyright Ioana Alexandru 2018
 //
 
 #ifndef TEMA1_PROBLEM_H
@@ -54,4 +54,4 @@ namespace tema1 {
   };
 }
 
-#endif //TEMA1_PROBLEM_H
+#endif // TEMA1_PROBLEM_H
