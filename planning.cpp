@@ -9,30 +9,27 @@
 #include <cmath>
 #include "./problem.h"
 
-int P, D, B, N;
-long long L;
-std::vector<int> lengths;
+int P,                     // number of tasks
+    D,                     // length of a contest
+    B,                     // length of break between tasks in a contest
+    N;                     // number of contests obtained for minimum total loss
+long long L;               // minimum total loss
+std::vector<int> lengths;  // length of each task
 
 struct Contest {
-  int start, end;
-  long long cost;
+  int start, end;          // indices of first and last task in contest
+  long long loss;          // loss associated with contest
 
-  Contest(int start, int end, long long cost) : start(start), end(end),
-                                                cost(cost) {}
-};
+  long long total_loss;    // total minimum loss from first contest to this one
+  int total_contests;      // total number of contests associated with min loss
 
-struct Result {
-  long long cost;
-  int contests;
-  bool assigned;
+  Contest(int start, int end, long long loss) : start(start), end(end),
+                                                loss(loss), total_loss(loss),
+                                                total_contests(1) {}
 
-  Result(long long cost, bool assigned) : cost(cost), contests(1),
-                                          assigned(assigned) {}
-
-  void set(long long cost, int contests, bool assigned) {
-    this->cost = cost;
-    this->contests = contests;
-    this->assigned = assigned;
+  void set(long long total_loss, int total_contests) {
+    this->total_loss = total_loss;
+    this->total_contests = total_contests;
   }
 };
 
@@ -44,6 +41,7 @@ bool tema1::Planning::Read(std::string filename) {
 
   f >> P >> D >> B;
 
+  lengths.clear();
   lengths.push_back(-1);  // virtual element
 
   for (int i = 0; i < P; i++) {
@@ -62,16 +60,16 @@ bool tema1::Planning::Read(std::string filename) {
 void tema1::Planning::Solve() {
   std::vector<Contest> contests;
 
-  for (int i = 1; i <= P; i++) {
+  for (int i = P; i >= 1; i--) {
     int length = 0;
-    for (int j = i; j <= P; j++) {
+    for (int j = i; j >= 1; j--) {
       length += lengths[j];
 
       if (length <= D) {
         if (j == P)
-          contests.emplace_back(i, j, 0);
+          contests.emplace_back(j, i, 0);
         else
-          contests.emplace_back(i, j, pow(D - length, 3));
+          contests.emplace_back(j, i, pow(D - length, 3));
       } else {
         break;
       }
@@ -80,26 +78,20 @@ void tema1::Planning::Solve() {
     }
   }
 
-  std::vector<Result> dp;
-
-  for (Contest c : contests)
-    dp.emplace_back(c.cost, c.start == 1);
-
-  for (unsigned long i = 1; i < contests.size(); i++) {
-    for (unsigned long j = 0; j < i; j++) {
-      if (contests.at(j).end + 1 != contests.at(i).start)
+  for (auto curr = contests.end() - 1; curr >= contests.begin(); curr--) {
+    for (auto prev = curr + 1; prev < contests.end(); prev++) {
+      if (prev->end + 1 < curr->start)
+        break;
+      if (prev->end + 1 != curr->start)
         continue;
-      if (!dp.at(i).assigned)
-        dp.at(i).set(contests.at(i).cost + dp.at(j).cost, dp.at(j).contests + 1,
-                     true);
-      else if (dp.at(j).cost + contests.at(i).cost < dp.at(i).cost)
-        dp.at(i).set(dp.at(j).cost + contests.at(i).cost, dp.at(j).contests + 1,
-                     true);
+      if ((curr->total_contests == 1 && curr->start != 1) ||
+          curr->loss + prev->total_loss < curr->total_loss)
+        curr->set(curr->loss + prev->total_loss, prev->total_contests + 1);
     }
   }
 
-  L = dp.at(dp.size() - 1).cost;
-  N = dp.at(dp.size() - 1).contests;
+  L = contests[0].total_loss;
+  N = contests[0].total_contests;
 }
 
 bool tema1::Planning::Write(std::string filename) {

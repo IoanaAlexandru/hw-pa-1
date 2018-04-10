@@ -8,7 +8,7 @@
  | __| _ __ _| |_(_)
  | _| '_/ _` |  _| |
  |_||_| \__,_|\__|_|
-                    
+
     Pentru ca fiecare frate să aibă mai multe obiecte preferate decât fratele său, iar
 dacă acest lucru nu este posibil, diferența finală să fie cât mai mică, fiecare frate va
 dori să aleagă concursul cu cele mai multe premii totale (suma dintre benzi și jocuri),
@@ -70,9 +70,47 @@ gur concurs), și același algoritm va fi aplicat.
                                                                 start
                                                                  end
 
-    Complexitatea programului este după cum urmează:
+    Complexitatea programului (worst-case) este după cum urmează:
 
 → Citire și salvare date: O(N)  │
-→ Sortare vector: O(N * log(N)) │=> Total: O(N * log(N))
-→ Algoritm de rezolvare: O(N)   │
+→ Sortare vector: O(N * log(N)) │=> Total: O(N^2)
+→ Algoritm de rezolvare: O(N^2) │
+→ Scriere date: O(1)            │
 
+  ___ _           _  __ _                 
+ | _ \ |__ _ _ _ (_)/ _(_)__ __ _ _ _ ___ 
+ |  _/ / _` | ' \| |  _| / _/ _` | '_/ -_)
+ |_| |_\__,_|_||_|_|_| |_\__\__,_|_| \___|
+
+    Pentru această problemă, am folosit un algoritm similar cu [weighted job scheduling]
+(https://www.youtube.com/watch?v=cr6Ip0J9izc). Pentru eficientizare, am folosit un sin-
+gur vector de "concursuri" care conține toate informațiile relevante:
+- indicii primei și ultimei probe din cadrul concursului
+- pierderea asociată concursului
+- pierderea totală minimă de la primul concurs până la acesta
+- numărul de concursuri asociat pierderii totale minime
+- o valoare booleană care indică dacă pierderea totală a fost calculată
+    
+    Am început prin a afla toate concursurile care pot fi obținute din probele și dura-
+tele date și a le adăuga în vector, de la ultima probă spre prima, astfel încât concur-
+surile să fie deja sortate descrescător în funcție de ultima probă, în vector.
+
+    Conform algoritmului pentru weighted job scheduling, parcurg vectorul crescător
+după ora de sfârșit (ultima probă, în cazul meu), deci de la sfârșit spre început. Pen-
+tru fiecare concurs, verific concursurile (aflate după poziția lui în vector) care au
+ora de sfârșit egală cu ora de început a concursului curent - 1. Salvez în vector valoa-
+rea optimă asociată fiecărui concurs, iar rezultatul se va afla pe poziția 0, deoarece
+am parcurs vectorul de la sfârșit către început.
+
+    Complexitatea programului (worst-case) este după cum urmează:
+
+→ Citire și salvare date: O(P)               │
+→ Aflare concursuri posibile: O(P^2)         │=> Total: O(P^4)
+→ Algoritm de rezolvare: O((P^2)^2) = O(P^4) │
+→ Scriere date: O(1)                         │
+
+    O altă abordare ar putea folosi căutare binară pentru o complexitate mai bună la
+worst-case - O(P^2 * log(P^2)) -, dar în cazul meu nu este neapărat necesară deoarece
+worst-case (situația în care durata unui concurs este mare, și toate probele pot
+fi combinate unele cu altele pentru a forma concursuri diferite) are o șansă foarte
+mică de a se întâmpla.
