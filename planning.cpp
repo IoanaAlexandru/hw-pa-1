@@ -2,26 +2,17 @@
 // Copyright Ioana Alexandru 2018
 //
 
-#include <vector>
-#include <algorithm>
-#include <fstream>
-#include <iterator>
 #include <cmath>
 #include "./problem.h"
 
-int P,                     // number of tasks
-    D,                     // length of a contest
-    B,                     // length of break between tasks in a contest
-    N;                     // number of contests obtained for minimum total loss
-long long L;               // minimum total loss
-std::vector<int> lengths;  // length of each task
+namespace tema1 {
 
 struct Contest {
-  int start, end;          // indices of first and last task in contest
-  long long loss;          // loss associated with contest
+  int start, end;        // indices of first and last task in contest
+  long long loss;        // loss associated with contest
 
-  long long total_loss;    // total minimum loss from first contest to this one
-  int total_contests;      // total number of contests associated with min loss
+  long long total_loss;  // total minimum loss from first contest to this one
+  int total_contests;    // total number of contests associated with min loss
 
   Contest(int start, int end, long long loss) : start(start), end(end),
                                                 loss(loss), total_loss(loss),
@@ -33,37 +24,35 @@ struct Contest {
   }
 };
 
-bool tema1::Planning::Read(std::string filename) {
+bool Planning::Read(std::string filename) {
   std::ifstream f(filename);
-
   if (!f.is_open())
     return false;
 
-  f >> P >> D >> B;
-
+  // Reset problem data
   lengths.clear();
   lengths.push_back(-1);  // virtual element
+  L = N = 0;
 
-  for (int i = 0; i < P; i++) {
+  f >> P >> D >> B;
+
+  for (auto i = 0; i < P; i++) {
     int length;
     f >> length;
     lengths.push_back(length);
   }
 
   f.close();
-
-  L = N = 0;
-
   return true;
 }
 
-void tema1::Planning::Solve() {
+void Planning::Solve() {
   std::vector<Contest> contests;  // vector used for the DP solution
 
   // Finding possible contests
-  for (int i = P; i >= 1; i--) {
+  for (auto i = P; i >= 1; i--) {
     int length = 0;
-    for (int j = i; j >= 1; j--) {
+    for (auto j = i; j >= 1; j--) {
       length += lengths[j];
 
       if (length <= D) {
@@ -96,16 +85,15 @@ void tema1::Planning::Solve() {
   N = contests[0].total_contests;
 }
 
-bool tema1::Planning::Write(std::string filename) {
-  std::ofstream f;
-  f.open(filename);
-
+bool Planning::Write(std::string filename) {
+  std::ofstream f(filename);
   if (!f.is_open())
     return false;
 
   f << L << ' ' << N;
 
   f.close();
-
   return true;
 }
+
+}  // namespace tema1

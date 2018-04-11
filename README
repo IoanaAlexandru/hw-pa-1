@@ -9,7 +9,13 @@ citește datele problemei dintr-un fișier dat ca parametru cu funcția Read(), 
 lează rezultatul cu funcția Solve() și scrie rezultatul într-un fișier dat ca parametru
 cu funcția Write(). Aceste funcții pot fi apelate de oricâte ori pentru o instanță de
 problemă, pentru recitirea datelor, scrierea într-un alt fișier sau recalcularea rezul-
-tatelor.
+tatelor. Pentru flexibilitate, datele de intrare și de ieșire ale fiecărei probleme pot
+fi accesate, și doar datele de intrare pot fi modificate în afara funcțiilor definite.
+
+    For the record, e prima dată când scriu ceva pe bune în C++ și am încercat să citesc
+câte ceva despre limbaj și best practices ("Tour of C++" - Bjarne Stroustrup, Google C++
+Style Guide) dar nu pot spune că îl stăpânesc foarte bine, așa că aș aprecia observații
+și feedback :)
   ___         _   _ 
  | __| _ __ _| |_(_)
  | _| '_/ _` |  _| |
