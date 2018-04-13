@@ -87,11 +87,11 @@ class Planning : public Problem {
 };
 
 class Counting : public Problem {
-  std::set<std::multiset<int> > sums;
+  std::vector<std::vector<int> > compositions;
  public:
   int s, n, i;
 
-  Counting() : s(0), n(0), i(0), sums() {}
+  Counting() : s(0), n(0), i(0), compositions() {}
 
   bool Read(std::string filename) override;
 
