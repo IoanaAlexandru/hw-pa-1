@@ -2,6 +2,7 @@
 // Copyright Ioana Alexandru 2018.
 //
 
+#include <cmath>
 #include "./problem.h"
 
 namespace tema1 {
@@ -22,33 +23,47 @@ bool Counting::Read(std::string filename) {
 
 void Counting::Solve() {
   std::set<std::multiset<int> > dp[n + 1];
+  // dp[i] -> i terms with the sum s
 
-  std::vector<int> v;
-  v.push_back(s);
+  std::multiset<int> v;
+  v.emplace(s);
   dp[1].emplace(v);
+
+  // Saving terms 2..s as a sum of two terms
+  std::vector<std::pair<int, int> > split_terms[s + 1];
+
+  for (auto i = 2; i <= s; i++) {
+    for (auto j = (int) ceil((double) i / 2); j < i; j++)
+    split_terms[i].emplace_back(j, i - j);
+  }
 
   for (auto nr_of_terms = 2; nr_of_terms <= n; nr_of_terms++) {
     auto prev_sums = dp[nr_of_terms - 1];
     for (auto prev_sum : prev_sums) {
+      std::set<std::multiset<int> > curr_sums;
+      int prev_term = -1;
+
       for (auto term : prev_sum) {
-        std::set<std::multiset<int> > curr_sums;
-        std::vector<int> terms;
+        if (term == 1 || term == prev_term)
+          continue;
 
-        for (auto prev_term : prev_sum)
-            if (prev_term != term)
-              terms.push_back(prev_term);
+        auto term_removed = prev_sum;
+        term_removed.erase(term);
 
-        for (auto new_term = term / 2; new_term >= 1; new_term--) {
-          terms.push_back(new_term);
-          terms.push_back(term - new_term);
-          curr_sums.emplace(terms);
-          terms.pop_back();
-          terms.pop_back();
+        for (auto new_terms : split_terms[term]) {
+          auto new_sum = term_removed;
+
+          new_sum.emplace(new_terms.first);
+          new_sum.emplace(new_terms.second);
+
+          curr_sums.emplace(new_sum);
         }
 
-        dp[nr_of_terms].insert(curr_sums.begin(), curr_sums.end());
-        curr_sums.clear();
+        prev_term = term;
       }
+
+      dp[nr_of_terms].insert(curr_sums.begin(), curr_sums.end());
+      curr_sums.clear();
     }
   }
 
