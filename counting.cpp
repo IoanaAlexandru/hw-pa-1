@@ -21,36 +21,23 @@ bool Counting::Read(std::string filename) {
   return true;
 }
 
-void Counting::Solve() {
-  std::vector<int> comp(s + 1, 0);
+void Counting::getCompositions(std::vector<int> v, int level) {
+  compositions.push_back(v);
 
-  auto k = 1, y = s - 1;
-
-  while (k != 0) {
-    int x = comp[k - 1] + 1;
-    k -= 1;
-    while (2 * x <= y) {
-      comp[k] = x;
-      y -= x;
-      k += 1;
-    }
-    int l = k + 1;
-    while (x <= y) {
-      comp[k] = x;
-      comp[l] = y;
-
-      if (k + 2 == n)
-        compositions.emplace_back(comp.begin(), comp.begin() + k + 2);
-
-      x += 1;
-      y -= 1;
-    }
-    comp[k] = x + y;
-    y = x + y - 1;
-
-    if (k + 1 == n)
-      compositions.emplace_back(comp.begin(), comp.begin() + k + 1);
+  while (true) {
+    v[level]--;
+    v[level + 1]++;
+    if (v[level] >= v[level + 1])
+      getCompositions(v, level + 1);
+    else
+      break;
   }
+}
+
+void Counting::Solve() {
+  std::vector<int> comp(n, 1);
+  comp[0] = s - (n - 1);
+  getCompositions(comp, 0);
 
   for (auto c : compositions) {
     for (auto i  = c.begin(); i < c.end(); i++) {

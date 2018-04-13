@@ -98,6 +98,8 @@ class Counting : public Problem {
   void Solve() override;
 
   bool Write(std::string filename) override;
+
+  void getCompositions(std::vector<int> v, int level);
 };
 
 }  // namespace tema1
