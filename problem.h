@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <list>
 #include <set>
 #include <utility>
 #include <vector>
@@ -87,19 +88,19 @@ class Planning : public Problem {
 };
 
 class Counting : public Problem {
-  std::vector<std::vector<int> > compositions;
+  std::vector<std::list<int> > partitions;
  public:
-  int s, n, i;
+  unsigned int s, n, i;
 
-  Counting() : s(0), n(0), i(0), compositions() {}
+  Counting() : partitions(), s(0), n(0), i(0) {}
+
+  std::vector<std::list<int> > getPartitions() { return partitions; }
 
   bool Read(std::string filename) override;
 
   void Solve() override;
 
   bool Write(std::string filename) override;
-
-  void getCompositions(std::vector<int> v, int level);
 };
 
 }  // namespace tema1

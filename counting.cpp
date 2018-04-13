@@ -13,7 +13,7 @@ bool Counting::Read(std::string filename) {
     return false;
 
   // Reset problem data
-  compositions.clear();
+  partitions.clear();
 
   f >> s >> n >> i;
 
@@ -21,32 +21,44 @@ bool Counting::Read(std::string filename) {
   return true;
 }
 
-void Counting::getCompositions(std::vector<int> v, int level) {
-  compositions.push_back(v);
-  int i = 1;
+bool order(int first, int second) {
+  return first > second;
+}
 
-  while (v[level + i - 1] > v[level + i]) {
-    v[level]--;
-    v[level + i]++;
-    if (v[level + i - 1] >= v[level + i])
-      getCompositions(v, level + i);
-    else {
-      i++;
-      v[level]++;
-      v[level + i - 1]--;
+std::vector<std::list<int> > computePartitions(int n, int k, int pre) {
+  std::vector<std::list<int> > partitions;
+  std::list<int> v;
+
+  if (n <= 0)
+    return partitions;
+
+  if (k == 1) {
+    if (n <= pre) {
+      v.push_back(n);
+      partitions.push_back(v);
+    }
+    return partitions;
+  }
+
+  for (auto i = std::min(pre, n); i > 0; i--) {
+    for (auto part : computePartitions(n - i, k - 1, i)) {
+      v.push_back(i);
+      v.merge(part, order);
+      partitions.push_back(v);
+      v.clear();
     }
   }
+
+  return partitions;
 }
 
 void Counting::Solve() {
-  std::vector<int> comp(n, 1);
-  comp[0] = s - (n - 1);
-  getCompositions(comp, 0);
+  partitions = computePartitions(s, n, s);
 
-  for (auto c : compositions) {
-    for (auto i  = c.begin(); i < c.end(); i++) {
-      std::cout << *i;
-      if (i != c.end() - 1)
+  for (auto c : partitions) {
+    for (auto &i : c) {
+      std::cout << i;
+      if (&i != &c.back())
         std::cout << "+";
     }
     std::cout << std::endl;
@@ -58,14 +70,14 @@ bool Counting::Write(std::string filename) {
   if (!f.is_open())
     return false;
 
-  if (i >= compositions.size()) {
+  if (i >= partitions.size()) {
     f << "-";
   } else {
     f << s << '=';
-    auto comp = compositions.at(i);
-    for (auto it = comp.begin(); it < comp.end(); it++) {
-      f << *it;
-      if (it != comp.end() - 1)
+    auto part = partitions.at(i);
+    for (auto &it : part) {
+      f << it;
+      if (&it != &part.back())
         f << "+";
     }
   }
