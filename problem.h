@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <set>
 #include <utility>
 #include <vector>
 
@@ -86,11 +87,11 @@ class Planning : public Problem {
 };
 
 class Counting : public Problem {
-  std::string sum;
+  std::set<std::multiset<int> > sums;
  public:
   int s, n, i;
 
-  Counting() : s(0), n(0), i(0), sum("-") {}
+  Counting() : s(0), n(0), i(0), sums() {}
 
   bool Read(std::string filename) override;
 
