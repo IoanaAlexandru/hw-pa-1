@@ -23,14 +23,18 @@ bool Counting::Read(std::string filename) {
 
 void Counting::getCompositions(std::vector<int> v, int level) {
   compositions.push_back(v);
+  int i = 1;
 
-  while (true) {
+  while (v[level + i - 1] > v[level + i]) {
     v[level]--;
-    v[level + 1]++;
-    if (v[level] >= v[level + 1])
-      getCompositions(v, level + 1);
-    else
-      break;
+    v[level + i]++;
+    if (v[level + i - 1] >= v[level + i])
+      getCompositions(v, level + i);
+    else {
+      i++;
+      v[level]++;
+      v[level + i - 1]--;
+    }
   }
 }
 
@@ -59,9 +63,9 @@ bool Counting::Write(std::string filename) {
   } else {
     f << s << '=';
     auto comp = compositions.at(i);
-    for (auto it = comp.end() - 1; it >= comp.begin(); it--) {
+    for (auto it = comp.begin(); it < comp.end(); it++) {
       f << *it;
-      if (it != comp.begin())
+      if (it != comp.end() - 1)
         f << "+";
     }
   }
