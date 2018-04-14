@@ -125,4 +125,42 @@ am parcurs vectorul de la sfârșit către început.
 worst-case - O(P^2 * log(P^2)) -, dar în cazul meu nu este neapărat necesară deoarece
 worst-case (situația în care durata unui concurs este mare, și toate probele pot
 fi combinate unele cu altele pentru a forma concursuri diferite) are o șansă foarte
-mică de a se întâmpla.
+mică de a se întâmpla, deci average-case este mult mai mic ca O(P ^ 4).
+
+  _  _                          _                     
+ | \| |_  _ _ __  __ _ _ _ __ _| |_ ___  __ _ _ _ ___ 
+ | .` | || | '  \/ _` | '_/ _` |  _/ _ \/ _` | '_/ -_)
+ |_|\_|\_,_|_|_|_\__,_|_| \__,_|\__\___/\__,_|_| \___|
+
+ 	Pentru a obține suma de la indicele i, am folosit o funcție recursivă care generează
+partițiile de dimensiune k ale unui număr întreg n - p(n, k) - în ordine lexicografică
+astfel:
+
+1. Dacă n este zero, nu există partiții valide.
+2. Dacă k este 1, singura partiție validă este cea formată doar din numărul n.
+3. Altfel, pot exista mai multe partiții  care încep cu termenul i (unde i <= n - 1).
+Termenii care urmează după i sunt obținuți printr-un apel recursiv care caută partițiile
+p(n - i, k - 1), adică partițiile de dimensiune k cu suma n - i.
+
+	Parametrul "prev" are rolul de a asigura ordinea lexicografică și a evita obținerea
+de duplicate.
+
+	Am încercat să optimizez algoritmul folosind memoizare: să salvez valorile calculate
+de apelurile la funcția computePartitions(n, k, prev) într-un HashMap ca să evit să le calculez de mai multe ori, sub cheia (n * 151 + k) * 151 + prev (care ar asigura o
+probabilitate foarte mică pentru coliziuni și o complexitate de căutare O(1)) dar C++
+nu m-a lăsat să am un unordered_map cu elemente std::vector<std::list<int> >. Am
+încercat să le pun într-o matrice tridimensională... dar aparent o matrice 151x151x151
+de elemente  std::vector<std::list<int> > e prea mare pentru a fi pusă pe stivă... am
+încercat și să simulez matricea printr-un vector dar tot a dat stack overflow :(
+
+	În final am renunțat din lipsă de timp, știu că ar trebui să existe o metodă mate-
+matică prin care să se genereze direct partiția i, dar nu mă pricep la mate așa că nu
+m-am încumetat la această soluție.
+
+    Complexitatea programului (worst-case) este după cum urmează:
+
+→ Citire și salvare date: O(1)      │
+→ Generare partiții: O(s!/(s - n)!) │=> Total: O(s!/(s - n)!)
+→ Scriere date: O(s * n)            │
+
+=============================== ALEXANDRU Ioana || 324CB ===============================

@@ -50,7 +50,7 @@ void Brothers::Solve() {
     contests.emplace_back(p.first, p.second);
   std::sort(contests.begin(), contests.end());
 
-  bool Jon_picks{true}; // true if it's Jon's turn to pick a contest
+  bool Jon_picks{true};  // true if it's Jon's turn to pick a contest
   int max_sum{0};  // biggest sum of prizes among the contests not chosen yet
 
   // Using iterators that point to the first/last contest in a group with the

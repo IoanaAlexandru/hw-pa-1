@@ -24,7 +24,6 @@ bool tema1::Bears::Read(std::string filename) {
 }
 
 void tema1::Bears::Solve() {
-
 }
 
 bool tema1::Bears::Write(std::string filename) {

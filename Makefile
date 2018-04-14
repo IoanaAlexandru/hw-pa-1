@@ -1,7 +1,6 @@
 build: brothers bears planning counting
 
 brothers:
-	# g++ -Wall -pg -no-pie frati.cpp brothers.cpp -o brothers
 	g++ -Wall frati.cpp brothers.cpp -o brothers
 
 bears:
@@ -11,7 +10,6 @@ planning:
 	g++ -Wall planificare.cpp planning.cpp -o planning
 
 counting:
-	# g++ -Wall -pg -no-pie numaratoare.cpp counting.cpp -o counting
 	g++ -Wall numaratoare.cpp counting.cpp -o counting
 
 run-p1:
