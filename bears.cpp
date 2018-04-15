@@ -42,9 +42,9 @@ void tema1::Bears::Solve() {
   auto length = message.length();
 
   // Creating matrix for DP  (￣(ｴ)￣)・・・
-  int kaomoji[length][carets + 1] {};
-  // where kaomoji[i][j] = number of faces that can be obtained up to index i
-  // considering j 'open' (unpaired) carets
+  long long kaomoji[length][carets + 1] {};
+  // where kaomoji[i][j] = number of face combinations that can be obtained up
+  // to index i considering j 'open' (unpaired) carets
 
   kaomoji[0][1] = 1;
 
@@ -54,31 +54,26 @@ void tema1::Bears::Solve() {
     char c = message.at(i);
     if (c == '^') {
       curr_carets++;
+      // Number of face combinations with no unpaired carets up to the ith char
+      // equals the number of combinations with one unpaired caret up to i - 1
       kaomoji[i][0] = kaomoji[i - 1][1];
     }
 
-    for (auto j = 0; j <= curr_carets; j++) {
-      if (c == '^' && j != 0) {
+    for (auto j = 1; j <= curr_carets; j++) {
+      if (c == '^') {
         // We can either consider the new caret as being open (so the faces that
         // can be obtained stay the same) or close any of the open carets
         kaomoji[i][j] = (kaomoji[i - 1][j - 1] +
-              (j + 1) * kaomoji[i - 1][j + 1]) % kMod;
-      } else if (c == '_'){
-        kaomoji[i][j] = (j * kaomoji[i - 1][j]) % kMod;  // _ can be added anywhere
+              ((j + 1) * kaomoji[i - 1][j + 1]) % kMod) % kMod;
+      } else if (c == '_') {
+        // We can add the underscore to any of the incomplete faces
+        kaomoji[i][j] = (j * kaomoji[i - 1][j]) % kMod;
       }
     }
   }
 
-  for (auto i = 0; i < length; i++) {
-    for (auto j = 0; j <= carets; j++) {
-      if (j == 0)
-        std::cout << message.at(i) << "  ";
-      std::cout << kaomoji[i][j] << ' ';
-    }
-    std::cout << std::endl;
-  }
-
   N =  kaomoji[length - 1][0];
+
   // Done!  ヽ( ˋ(ｴ)´ )ﾉ
 }
 

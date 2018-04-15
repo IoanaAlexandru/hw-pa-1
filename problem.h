@@ -52,7 +52,7 @@ class Brothers : public Problem {
 };
 
 class Bears : public Problem {
-  double N;  // number of possible face combinations
+  long long N;  // number of possible face combinations
  public:
   std::string message;
 

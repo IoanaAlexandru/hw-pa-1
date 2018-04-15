@@ -89,6 +89,34 @@ gur concurs), și același algoritm va fi aplicat.
 → Sortare vector: O(N * log(N)) │=> Total: O(N^2)
 → Algoritm de rezolvare: O(N^2) │
 → Scriere date: O(1)            │
+ __         __
+/  \.-"""-./  \
+\    -   -    /  _   _        _ 
+ |   o   o   |  | | | |_ _ __(_)
+ \  .-'''-.  /  | |_| | '_(_-< |
+  '-\__Y__/-'    \___/|_| /__/_| 
+     `---`       
+	Am folosit programare dinamică pentru această problemă, salvând datele intermediare
+într-o matrice în care elementul kaomoji[i][j] are semnificația numărului de combinații
+de emoticoane care se pot forma până la caracterul i al mesajului, considerând j fețe ca
+fiind incomplete. Cu această interpretare, răspunsul la problemă se va afla pe poziția
+(lungime_mesaj - 1, 0), adică numărul de combinații de emoticoane până la sfârșitul
+șirului, cu nici o față incompletă.
+
+	Parcurgând mesajul, atunci când găsim un caracter '^', numărul de combinații fără
+fețe incomplete va fi dat de numărul de combinații cu o singură față completă calculat
+anterior. Numărul de combinații cu j fețe incomplete este calculat astfel: dacă (,)
+caracterul curent este '^', atunci putem fie să completăm oricare din fețele incomplete
+din șir, fie să îl considerăm și pe el ca fiind un început de față nouă; dacă, pe de
+altă parte, caracterul este '_', el poate face parte din oricare din fețele incomplete
+din șir.
+
+    Complexitatea programului (worst-case) este după cum urmează (considerând n ca fiind
+lungimea mesajului):
+
+→ Citire și salvare date: O(n) │
+→ Numărare folosind DP: O(n^2) │=> Total: O(n^2)
+→ Scriere date: O(1)           │
 
   ___ _           _  __ _                 
  | _ \ |__ _ _ _ (_)/ _(_)__ __ _ _ _ ___ 
